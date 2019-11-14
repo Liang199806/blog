@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoImpl implements UserDao {
@@ -64,5 +65,37 @@ public class UserDaoImpl implements UserDao {
             user.setStatus(rs.getShort("status"));
         }
         return user;
+    }
+
+    @Override
+    public List<User> selectAll() throws SQLException {
+        Connection connection = DbUtil.getConnection();
+        String sql = "SELECT * FROM t_user ORDER BY id DESC";
+        PreparedStatement pstmt = connection.prepareStatement(sql);
+        /*用result集合放置从数据库中得到数据，executeQuery()只对查询有用*/
+        ResultSet rs = pstmt.executeQuery();
+        List<User> userList = new ArrayList<>();
+        while(rs.next()){
+            User user = new User();
+            user.setId(rs.getLong("id"));
+            user.setMobile(rs.getString("mobile"));
+            user.setPassword(rs.getString("password"));
+            user.setNickname(rs.getString("avatar"));
+            user.setGender(rs.getString("gender"));
+            user.setBirthday(rs.getDate("birthday").toLocalDate());
+            user.setAddress(rs.getString("address"));
+            user.setIntroduction(rs.getString("introduction"));
+            user.setAddress(rs.getString("address"));
+            user.setFollows(rs.getShort("follows"));
+            user.setFans(rs.getShort("fans"));
+            user.setArticles(rs.getShort("articles"));
+            user.setCreateTime(rs.getTimestamp("create_time").toLocalDateTime());
+            user.setStatus(rs.getShort("status"));
+            /*将数据库中一个对象的数据添加到userList中，每次只加一条*/
+            userList.add(user);
+
+        }
+
+        return userList;
     }
 }

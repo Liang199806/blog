@@ -23,4 +23,6 @@ public interface UserDao {
      */
     User findUserByMobile(String mobile) throws SQLException;
 
+    /*所有用户查询*/
+    List<User> selectAll () throws SQLException;
 }

@@ -1,6 +1,8 @@
 package com.niit.web.blog.util;
 
+import com.niit.web.blog.entity.Address;
 import com.niit.web.blog.entity.User;
+import com.niit.web.blog.entity.Works;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +24,32 @@ import java.util.List;
  **/
 public class JSoupSpider {
     private static Logger logger = LoggerFactory.getLogger(JSoupSpider.class);
+
+    public static List<Works> getWork() {
+        Document document = null;
+        List<Works> worksList = new ArrayList<>(100);
+            try {
+                document = Jsoup.connect("https://www.jianshu.com/").get();
+            } catch (IOException e) {
+                logger.error("连接失败");
+            }
+            Elements divs = document.getElementsByClass("have-img");
+            divs.forEach(div -> {
+                Element wrapImg = div.child(0);
+                Element contentDiv = div.child(1);
+
+                Works works = new Works();
+                works.setTitle(contentDiv.child(0).text());
+                works.setContent(contentDiv.child(1).text());
+                works.setPicture("http://"+wrapImg.child(0).attr("src"));
+                works.setAuthorid(DataUtil.getAuthorId());
+                works.setComments(DataUtil.getCommentAccount());
+                works.setLike(DataUtil.getCommentAccount());
+                works.setReleasetime(LocalDateTime.now());
+                worksList.add(works);
+            });
+        return worksList;
+    }
 
     public static List<User> getUsers() {
         Document document = null;
@@ -51,4 +79,35 @@ public class JSoupSpider {
         }
         return userList;
     }
+
+    public static List<Address> getAddresss() {
+        Document document = null;
+        List<Address> addressList = new ArrayList<>(100);
+
+        try {
+            document = Jsoup.connect("http://www.ip33.com/area_code.html" ).get();
+        } catch (IOException e) {
+            logger.error("连接失败");
+        }
+        Elements divs = document.getElementsByClass("ip");
+        divs.forEach(div -> {
+
+            Elements elements = div.child(1).child(0).child(1).children();
+            elements.forEach(element -> {
+                Address address = new Address();
+                StringBuilder province = new StringBuilder("");
+                String country = div.child(1).child(0).child(0).text();
+                int c = country.indexOf(" ");
+                int p = div.child(0).text().indexOf(" ");
+                int e = element.text().indexOf(" ");
+                province.append(div.child(0).text().substring(0, p)).append(country.substring(0,c)).append(element.text().substring(0, e));
+                address.setAddress(province.toString());
+                addressList.add(address);
+            });
+
+        });
+
+        return addressList;
+    }
 }
+

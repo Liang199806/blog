@@ -5,12 +5,14 @@ import com.niit.web.blog.domain.UserDto;
 import com.niit.web.blog.entity.User;
 import com.niit.web.blog.factory.DaoFactory;
 import com.niit.web.blog.service.UserService;
+import com.niit.web.blog.util.DbUtil;
 import com.niit.web.blog.util.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -46,5 +48,16 @@ public class UserServiceImpl implements UserService {
             map.put("msg", Message.MOBILE_NOT_FOUND);
         }
         return map;
+    }
+
+    @Override
+    public List<User> listUser() {
+        List<User> userList = null;
+        try {
+            userList = userDao.selectAll();
+        } catch (SQLException e) {
+            logger.error("查询所有用户功能出现异常");
+        }
+        return userList;
     }
 }

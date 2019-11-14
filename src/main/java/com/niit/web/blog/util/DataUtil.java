@@ -44,4 +44,22 @@ public class DataUtil {
         int bound=random.nextInt(8888);
         return now.minusDays(bound);
     }
+    public static int getAuthorId(){
+        StringBuilder stringBuilder=new StringBuilder();
+        Random random=new Random();
+       int id = random.nextInt(73);
+       return id;
+    }
+
+    public static int getCommentAccount(){
+        Random random = new Random();
+        int account = random.nextInt(200);
+        return account;
+    }
+
+    public static int getLikeAccount(){
+        Random random = new Random();
+        int account = random.nextInt(200);
+        return account;
+    }
 }

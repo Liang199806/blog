@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
- * @author mq_xu
+ * @author liang
  * @ClassName User
  * @Description 用户实体类
  * @Date 9:47 2019/11/9
