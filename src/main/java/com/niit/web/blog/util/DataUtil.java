@@ -62,4 +62,16 @@ public class DataUtil {
         int account = random.nextInt(200);
         return account;
     }
+    public static Long getUserId(){
+        Random random = new Random();
+        long bound = random.nextInt(61);
+        return bound;
+    }
+    public static LocalDateTime getCreateTime(){
+        LocalDateTime now = LocalDateTime.now();
+        Random random = new Random();
+        int bound = random.nextInt(999);
+        return now.minusHours(bound);
+    }
+
 }

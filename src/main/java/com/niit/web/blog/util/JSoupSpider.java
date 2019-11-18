@@ -1,6 +1,7 @@
 package com.niit.web.blog.util;
 
 import com.niit.web.blog.entity.Address;
+import com.niit.web.blog.entity.Article;
 import com.niit.web.blog.entity.User;
 import com.niit.web.blog.entity.Works;
 import org.jsoup.Jsoup;
@@ -109,5 +110,54 @@ public class JSoupSpider {
 
         return addressList;
     }
+
+    public static List<Article> getArticles() {
+        Document document = null;
+        List<Article> articleList = new ArrayList<>(100);
+        for (int i = 1; i<=7; i++) {
+            try {
+                document = Jsoup.connect("https://www.jianshu.com/c/87b50a03a96e?order_by=top&count=50&page=" + i).get();
+            } catch (IOException e) {
+                logger.error("连接失败1");
+            }
+            Elements divs = document.getElementsByClass("have-img");
+            divs.forEach(div -> {
+                String articleUrl = div.child(0).attr("href");
+                Document document1 = null;
+                try {
+                    document1 = Jsoup.connect("https://www.jianshu.com" + articleUrl).get();
+                } catch (IOException e) {
+                    logger.error("连接失败2");
+                }
+                Element articleElement = document1.getElementsByClass("_2rhmJa").first();
+                Article article = new Article();
+                article.setContent(articleElement.html());
+
+                Elements elements = div.children();
+                Element linkElement = elements.get(0);
+                Element divElement = elements.get(1);
+                article.setUserId(DataUtil.getUserId());
+                article.setTitle(divElement.child(0).text());
+                article.setSummary(divElement.child(1).text());
+                String img = "https:" + linkElement.child(0).attr("src");
+                int index = img.indexOf("?");
+                article.setThumbnail(img.substring(0, index));
+                Elements metaChildren = divElement.child(2).children();
+                String comments = metaChildren.get(2).text();
+                String likes = metaChildren.last().text();
+                try {
+                    article.setComments(Integer.parseInt(comments));
+                    article.setLikes(Integer.parseInt(likes));
+                } catch (NumberFormatException e) {
+                    logger.error("格式转换异常");
+                }
+                article.setCreateTime(DataUtil.getCreateTime());
+                articleList.add(article);
+            });
+        }
+        System.out.println(articleList.size());
+        return articleList;
+    }
+
 }
 
