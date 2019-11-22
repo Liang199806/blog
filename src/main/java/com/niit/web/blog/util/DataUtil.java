@@ -2,9 +2,11 @@ package com.niit.web.blog.util;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * @Description 数据生成工具,用来生成用户的一些数据
@@ -72,6 +74,17 @@ public class DataUtil {
         Random random = new Random();
         int bound = random.nextInt(999);
         return now.minusHours(bound);
+    }
+    public static String getRandomName(String name){
+        int i=name.indexOf(".");
+        String name1=name.substring(i);
+        String name2= UUID.randomUUID()+name1;
+        return name2;
+    }
+    public static String createFile(String path){
+        File dif = new File(path);
+        dif.mkdirs();
+        return path;
     }
 
 }
